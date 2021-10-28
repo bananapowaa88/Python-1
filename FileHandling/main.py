@@ -1,6 +1,13 @@
 import os
 import time
+from os import listdir
+from os.path import isfile, join
 workAns = None
+
+def getFilePathName():
+    return os.listdir(os.path.abspath(os.getcwd()))
+
+
 
 def handleFiles():
     while True:
@@ -9,7 +16,7 @@ def handleFiles():
         if tmp == 'r' or tmp == 'a' or tmp == 'w':
             if tmp == 'r':
                 print("\n\nOkey, here is the content of the file:\n")
-                f = open("demo.txt", "r")
+                f = open("test.py", "r")
                 print(f.read())
                 f.close()
             if tmp == 'w':
@@ -49,16 +56,23 @@ def checkFiles():
                 time.sleep(1)
                 print(".")
 
-while workAns == None:
-    workAns = input("Would you like to work with files?\nType 'Yes' or 'No'\nAnytime in the program, type 'close' as answer to stop the program.\n")
-    if workAns.lower() == "yes":
-        checkFiles()
-    elif workAns.lower() == "no" or workAns.lower() == "close":
-        print("Thanks for the use!")
-        break
-    else:
-        print("\nYour answer is not correct. Type 'Yes' or 'No'.")
-        workAns = None
-        time.sleep(3)
+print("\nWelcome to the FileHandler.")
+if input("List the files? Yes or No:\n").lower() == "yes":
+    files = getFilePathName()
 
-
+    for f in files:
+        print(f)
+    while workAns == None:
+        workAns = input(
+            "Would you like to work with files?\nType 'Yes' or 'No'\nAnytime in the program, type 'close' as answer to stop the program.\n")
+        if workAns.lower() == "yes":
+            checkFiles()
+        elif workAns.lower() == "no" or workAns.lower() == "close":
+            print("Thanks for the use!")
+            break
+        else:
+            print("\nYour answer is not correct. Type 'Yes' or 'No'.")
+            workAns = None
+            time.sleep(3)
+else:
+    print("Thanks for the use!")
