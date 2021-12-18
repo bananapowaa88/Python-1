@@ -1,0 +1,103 @@
+extends Panel
+
+onready var QuestionText = $Question
+onready var ans_1 = $Button1
+onready var ans_2 = $Button2
+onready var ans_3 = $Button3
+onready var ans_4 = $Button4
+onready var nextButton = $NextOne
+
+var question:Array # a kérdések listája
+var answers:Array # a jó válaszok listája
+var buttons:Array # a gombok listája
+var index = 0 # hanyadik kérdés a kvízben
+var badAnswers = 0
+
+
+
+func _ready():
+	buttons.clear()
+	nextButton.disabled = true
+	
+	buttons.append(ans_1)
+	buttons.append(ans_2)
+	buttons.append(ans_3)
+	buttons.append(ans_4)
+	
+	for button in buttons:
+		button.disabled = true
+
+
+func _on_Generate_pressed():
+	question = []
+	answers = []
+	index = 0
+	badAnswers = 0
+	
+	var file_read = File.new()
+	
+	if (file_read.open("res://question.txt", File.READ) != 0 or file_read.open("res://answers.txt", File.READ) != 0):
+		QuestionText.text = "Nem sikerült megnyitni a fájlt..."
+	else:
+		file_read.open("res://question.txt", File.READ)
+		
+		while not file_read.eof_reached():
+			var line = file_read.get_line()
+			var word = line.split(";")
+			var sentence = word.size()
+			question.append(word)
+			
+		file_read.close()
+		
+		file_read.open("res://answers.txt", File.READ)
+		
+		while not file_read.eof_reached():
+			var line = file_read.get_line()
+			answers.append(line)
+		
+		file_read.close()
+		
+		print("Sikerült")
+		
+func nextQuestion():
+	if index == question.size()-2:
+		print("Vége a játéknak")
+		
+		nextButton.disabled = true
+		for button in buttons:
+			button.disabled = true
+		
+		QuestionText.text = "Gratulálok, végig csináltad a kvízt! Csak "+str(badAnswers) + " alkalommal hibáztál."
+	
+	if index < question.size()-2:
+		index += 1
+		QuestionText.text = question[index][0]
+		for i in buttons.size():
+			buttons[i].text = question[index][i+1]
+		
+		for button in buttons:
+			button.disabled = false
+	
+
+
+func _on_NextOne_pressed():
+	badAnswers += 1
+	if index < question.size()-2:
+		nextQuestion()
+	if index == question.size()-2:
+		nextButton.disabled = true
+
+
+func _on_Button1_pressed():
+	checkAnswer(ans_1)
+
+
+func _on_Button2_pressed():
+	checkAnswer(ans_2)
+
+
+func _on_Button3_pressed():
+	checkAnswer(ans_3)
+	
+func _on_Button4_pressed():
+	checkAnswer(ans_4)
